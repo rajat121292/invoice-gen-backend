@@ -144,3 +144,17 @@ var server = app.listen(3000, "127.0.0.1", function () {
         })
     }
 )
+
+app.get('/invoice/user/owner/:id', function (req, res) {
+    connection.query('select * from asset where owner_id=?', [req.params.id], function (error, results, fields) {
+       if (error) throw error;
+       res.end(JSON.stringify(results));
+     });
+ });
+
+ app.get('/invoice/user/tenant/:id', function (req, res) {
+    connection.query('select * from asset where tenant_id=?', [req.params.id], function (error, results, fields) {
+       if (error) throw error;
+       res.end(JSON.stringify(results));
+     });
+ });
