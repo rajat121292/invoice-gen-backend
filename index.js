@@ -22,6 +22,8 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
+
+
 var server = app.listen(3000, "127.0.0.1", function () {
  
     var host = server.address().address
@@ -31,42 +33,11 @@ var server = app.listen(3000, "127.0.0.1", function () {
    
   });
 
-//   app.get('/customer', function (req, res) {
-//     connection.query('select * from customer', function (error, results, fields) {
-//     if (error) throw error;
-//     res.end(JSON.stringify(results));
-//   });
-//  });
+ app.post('/user/add', function(req, res) {
 
-//  //rest api to get a single customer data
-// app.get('/customer/:id', function (req, res) {
-//     connection.query('select * from customer where Id=?', [req.params.id], function (error, results, fields) {
-//        if (error) throw error;
-//        res.end(JSON.stringify(results));
-//      });
-//  });
+    // res.header("Access-Control-Allow-Origin", "*");
+    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-//  //rest api to create a new customer record into mysql database
-// app.post('/customer', function (req, res) {
-//     var params  = req.body;
-//     console.log(params);
-//     connection.query('INSERT INTO customer SET ?', params, function (error, results, fields) {
-//        if (error) throw error;
-//        res.end(JSON.stringify(results));
-//      });
-//  });
-
-//  //rest api to create a new customer record into mysql database
-// app.post('/customer', function (req, res) {
-//     var params  = req.body;
-//     console.log(params);
-//     connection.query('INSERT INTO customer SET ?', params, function (error, results, fields) {
-//        if (error) throw error;
-//        res.end(JSON.stringify(results));
-//      });
-//  });
-
- app.post('/user', function(req, res) {
      var params = req.body;
      console.log(params);
      connection.query('INSERT INTO user SET ?', params, function (error, results, fields) {
