@@ -91,10 +91,11 @@ var connection = mysql.createConnection({
    })
   
    app.get('/user/email/:email/password/:password', function (req, res) {
-       var params = req.body;
-       var email = params.email;
-       var password = params.password;
-  
+     console.log(req.params);
+       var param = req.params;
+       var email = param.email;
+       var password = param.password;
+
       connection.query('select * from user where email=? and password=?', [email, password], function (error, results, fields) {
          if (error) throw error;
          res.end(JSON.stringify(results));
