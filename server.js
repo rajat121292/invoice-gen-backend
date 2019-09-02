@@ -9,7 +9,7 @@ var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   password : 'iamreputed',
-  database : 'test',
+  database : 'invoicemgmt',
 });
  
  
@@ -52,7 +52,7 @@ var server = app.listen(3000, "127.0.0.1", function () {
             res.end(JSON.stringify(error));
        }
        
-        res.send(results);
+        res.send(results[0]);
     });
  })
 
