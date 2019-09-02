@@ -102,6 +102,19 @@ var connection = mysql.createConnection({
        });
    });
 
+   app.get('/asset', function(req, res) {
+     console.log("params in the request: " + req.params);
+
+     connection.query('select * from asset',function(error, results) {
+        if(error) {
+          res.send(JSON.stringify(error));
+          throw error;
+        }
+
+        res.send(results);
+     });
+   })
+
    app.post('/asset', function (req, res) {
      console.log("body in the request for /asset is : " + req.body);
      var reqBody = req.body;
