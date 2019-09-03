@@ -85,8 +85,10 @@ var connection = mysql.createConnection({
           if (error) {
               throw error;
          }
-         
-          res.send(results.length > 0 ? results[0] : null);
+
+         var rows = results.length > 0 ? results[0] : null;
+          console.log("results from mysql : " + results);
+          res.send(JSON.stringify(rows));
       });
    })
   
@@ -98,7 +100,10 @@ var connection = mysql.createConnection({
 
       connection.query('select * from user where email=? and password=?', [email, password], function (error, results, fields) {
          if (error) throw error;
-         res.end(results.length > 0 ? results[0] : null);
+
+         var rows = results.length > 0 ? results[0] : null;
+          console.log("results from mysql : " + results);
+          res.send(JSON.stringify(rows));
        });
    });
 
@@ -144,8 +149,47 @@ var connection = mysql.createConnection({
           throw error;
       }
      
-      res.send(results);
+      var rows = results.length > 0 ? results[0] : null;
+          console.log("results from mysql : " + results);
+          res.send(JSON.stringify(rows));
      });
+   })
+
+
+   app.post('/contract', function(req, res) {
+    console.log("body in the request for /contract is : " + req.body);
+    var reqBody = req.body;
+
+    var assetId = reqBody.assetId;
+    var lesseId = reqBody.lesseId;
+    var amountPerCycle = reqBody.amountPerCycle;
+    var billCycle = reqBody.billCycle;
+
+    queryParams = {
+      asset_id: assetId,
+      lesse_id: lesseId,
+      amount_per_cycle: amountPerCycle,
+      bill_cycle: billCycle
+    }
+
+    connection.query('insert into contract set ?', queryParams, function(error, results) {
+       if (error) {  
+         res.send(JSON.stringify(error));
+         throw error;
+       }
+    });
+
+    connection.query('SELECT * FROM contract where asset_id = ? and lesse_id = ? and amount_per_cycle = ? and bill_cycle = ?'
+    , [queryParams.asset_id, queryParams.lesse_id, queryParams.amount_per_cycle, queryParams.bill_cycle], function (error, results, fields) {
+     if (error) {
+      res.send(JSON.stringify(error));
+         throw error;
+     }
+    
+     var rows = results.length > 0 ? results[0] : null;
+         console.log("results from mysql : " + results);
+         res.send(JSON.stringify(rows));
+    });
    })
   
   
