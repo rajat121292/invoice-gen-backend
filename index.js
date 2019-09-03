@@ -98,7 +98,7 @@ var connection = mysql.createConnection({
 
       connection.query('select * from user where email=? and password=?', [email, password], function (error, results, fields) {
          if (error) throw error;
-         res.end(JSON.stringify(results));
+         res.end(results.length > 0 ? results[0] : null);
        });
    });
 
