@@ -86,7 +86,7 @@ var connection = mysql.createConnection({
               throw error;
          }
          
-          res.send(results);
+          res.send(results[0]);
       });
    })
   
