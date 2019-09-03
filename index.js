@@ -7,6 +7,8 @@ const EventEmitter = require('events');
 
 
 const d = require('domain').create();
+
+var insertId;
 d.on('error', (er) => {
   // The error won't crash the process, but what it does is worse!
   // Though we've prevented abrupt process restarting, we are leaking
@@ -156,18 +158,68 @@ var connection = mysql.createConnection({
    })
 
 
+
+   ///it is incomplete, Please complete it
+   app.post('/asset/update', function (req, res) {
+    console.log("body in the request for /asset/update is : " + JSON.stringify(req.body));
+    var reqBody = req.body;
+
+    var assetId = reqBody.assetId;
+    var assetName = reqBody.assetName;
+    var description = reqBody.description;
+    var address = reqBody.address;
+    var ownerId = reqBody.ownerId;
+
+    queryParams = {
+      id: assetId,
+      name: assetName,
+      description: description,
+      address: address,
+      owner_id: ownerId
+    }
+
+    if(!queryParams.id) {
+      res.send(new Error("id cannot be null while updating the asset"));
+      return;
+    }
+
+    connection.query('update  asset set name = ? and description = ? and address = ? and owner_id = ? where id = ?',
+     [queryParams.name, queryParams.description, queryParams.address, queryParams.owner_id, queryParams.id], function(error, results) {
+       if (error) {  
+         res.send(JSON.stringify(error));
+         return;
+       }
+    });
+
+    connection.query('SELECT * FROM asset where id = ?'
+    , [queryParams.id], function (error, results, fields) {
+     if (error) {
+      res.send(JSON.stringify(error));
+      return;
+     }
+    
+     var rows = results.length > 0 ? results[0] : null;
+         console.log("results from mysql : " + results);
+         res.send(JSON.stringify(rows));
+    });
+  })
+
+
+
    app.post('/contract', function(req, res) {
     console.log("body in the request for /contract is : " + req.body);
     var reqBody = req.body;
 
     var assetId = reqBody.assetId;
     var lesseId = reqBody.lesseId;
+    var lessorId = reqBody.lessorId;
     var amountPerCycle = reqBody.amountPerCycle;
     var billCycle = reqBody.billCycle;
 
     queryParams = {
       asset_id: assetId,
       lesse_id: lesseId,
+      lessor_id: lessorId,
       amount_per_cycle: amountPerCycle,
       bill_cycle: billCycle
     }
@@ -179,8 +231,9 @@ var connection = mysql.createConnection({
        }
     });
 
-    connection.query('SELECT * FROM contract where asset_id = ? and lesse_id = ? and amount_per_cycle = ? and bill_cycle = ?'
-    , [queryParams.asset_id, queryParams.lesse_id, queryParams.amount_per_cycle, queryParams.bill_cycle], function (error, results, fields) {
+    connection.query('SELECT * FROM contract where asset_id = ?  and lesse_id = ? and lessor_id = ? and amount_per_cycle = ? and bill_cycle = ?'
+    , [queryParams.asset_id, queryParams.lesse_id, queryParams.lessor_id, queryParams.amount_per_cycle, queryParams.bill_cycle], 
+    function (error, results, fields) {
      if (error) {
       res.send(JSON.stringify(error));
          throw error;
@@ -191,6 +244,21 @@ var connection = mysql.createConnection({
          res.send(JSON.stringify(rows));
     });
    })
+
+
+   app.get('/contract/:userId', function(req, res) {
+    console.log("params in the request: " + JSON.stringify(req.params));
+
+    connection.query('select * from contract where lessor_id=? or lesse_id = ?',[req.params.userId, req.params.userId],
+    function(error, results) {
+       if(error) {
+         res.send(JSON.stringify(error));
+         throw error;
+       }
+
+       res.send(results);
+    });
+  })
   
   
 });
